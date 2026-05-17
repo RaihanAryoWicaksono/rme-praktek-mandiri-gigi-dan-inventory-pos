@@ -3,7 +3,10 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Rekam Medis</h2>
     </x-slot>
 
-    <div class="space-y-5">
+    <div class="space-y-5" x-data="{
+        showDeleteModal: false, deleteUrl: '', itemName: '',
+        openModal(url, name) { this.deleteUrl = url; this.itemName = name; this.showDeleteModal = true; }
+    }" @open-delete-modal.window="openModal($event.detail.url, $event.detail.name)">
         <div class="main-content-card p-6">
             <div class="flex items-center justify-between mb-5">
                 <div>
@@ -70,10 +73,9 @@
                                             <a href="{{ route('rekam-medis.edit', $rm) }}"
                                                class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors px-2 py-1 rounded hover:bg-blue-50">Edit</a>
                                             <span class="text-gray-200">|</span>
-                                            <form method="POST" action="{{ route('rekam-medis.destroy', $rm) }}" onsubmit="return confirm('Hapus rekam medis ini?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="text-xs font-semibold text-red-500 hover:text-red-700 transition-colors px-2 py-1 rounded hover:bg-red-50">Hapus</button>
-                                            </form>
+                                            <button type="button"
+                                                    @click="$dispatch('open-delete-modal', { url: '{{ route('rekam-medis.destroy', $rm) }}', name: '{{ addslashes($rm->patient->display_name) }} — {{ $rm->kunjungan->tanggal_kunjungan->format('d M Y') }}' })"
+                                                    class="text-xs font-semibold text-red-500 hover:text-red-700 transition-colors px-2 py-1 rounded hover:bg-red-50">Hapus</button>
                                         </div>
                                     </td>
                                 </tr>
@@ -92,6 +94,28 @@
                         {{ $rekamMedis->links() }}
                     </div>
                 @endif
+            </div>
+        </div>
+
+        {{-- Delete Modal --}}
+        <div x-show="showDeleteModal" x-cloak
+             class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/50 backdrop-blur-sm"
+             x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
+             x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0">
+            <div @click.away="showDeleteModal = false"
+                 class="bg-white rounded-2xl shadow-2xl p-6 max-w-sm w-full mx-4"
+                 x-transition:enter="ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100"
+                 x-transition:leave="ease-in duration-150" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95">
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Konfirmasi Hapus</h3>
+                <p class="text-sm text-gray-600 mb-6">Hapus rekam medis <span class="font-semibold text-red-600" x-text="itemName"></span>?</p>
+                <div class="flex justify-end gap-2">
+                    <button type="button" @click="showDeleteModal = false"
+                            class="px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition">Batal</button>
+                    <form :action="deleteUrl" method="POST" class="inline-block">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="px-4 py-2 text-sm font-semibold bg-red-600 text-white rounded-lg hover:bg-red-700 transition">Ya, Hapus</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
