@@ -73,8 +73,8 @@
                 </div>
 
                 {{-- Right Column: Odontogram --}}
-                <div class="lg:col-span-7">
-                    <div class="bg-white rounded-xl border border-gray-200 p-5 h-full">
+                <div class="lg:col-span-7 h-fit sticky top-4">
+                    <div class="bg-white rounded-xl border border-gray-200 p-5">
                         <h2 class="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1">Odontogram Digital</h2>
                         <p class="text-xs text-gray-400 mb-4">Klik gigi untuk menandai kondisi. Data sebelumnya sudah dimuat.</p>
                         @include('rekam-medis._odontogram', ['initialData' => json_encode($rekamMedis->odontogram_data ?: new \stdClass())])

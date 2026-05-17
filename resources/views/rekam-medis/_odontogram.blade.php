@@ -78,11 +78,12 @@
                             <div class="flex flex-col items-center cursor-pointer" @click="openPopup({{ $t }})">
                                 <span class="text-xs text-gray-400 mb-0.5">{{ $t }}</span>
                                 <svg width="36" height="36" viewBox="0 0 36 36" class="rounded border" :class="getToothClass({{ $t }})">
-                                    <polygon points="0,0 18,18 0,36" :fill="getSurfaceColor({{ $t }}, 'M')" stroke="white" stroke-width="0.5" />
-                                    <polygon points="36,0 18,18 36,36" :fill="getSurfaceColor({{ $t }}, 'D')" stroke="white" stroke-width="0.5" />
-                                    <polygon points="0,0 36,0 18,18" :fill="getSurfaceColor({{ $t }}, 'V')" stroke="white" stroke-width="0.5" />
-                                    <polygon points="0,36 36,36 18,18" :fill="getSurfaceColor({{ $t }}, 'L')" stroke="white" stroke-width="0.5" />
-                                    <circle cx="18" cy="18" r="7" :fill="getSurfaceColor({{ $t }}, 'O')" stroke="white" stroke-width="0.5" />
+                                    <rect width="36" height="36" fill="#f9fafb"/>
+                                    <polygon points="0,0 18,18 0,36" :fill="getSurfaceColor({{ $t }}, 'M')" stroke="#d1d5db" stroke-width="1" />
+                                    <polygon points="36,0 18,18 36,36" :fill="getSurfaceColor({{ $t }}, 'D')" stroke="#d1d5db" stroke-width="1" />
+                                    <polygon points="0,0 36,0 18,18" :fill="getSurfaceColor({{ $t }}, 'V')" stroke="#d1d5db" stroke-width="1" />
+                                    <polygon points="0,36 36,36 18,18" :fill="getSurfaceColor({{ $t }}, 'L')" stroke="#d1d5db" stroke-width="1" />
+                                    <circle cx="18" cy="18" r="7" :fill="getSurfaceColor({{ $t }}, 'O')" stroke="#d1d5db" stroke-width="1" />
                                 </svg>
                             </div>
                         @endforeach
@@ -99,11 +100,12 @@
                         @foreach ($group as $t)
                             <div class="flex flex-col items-center cursor-pointer" @click="openPopup({{ $t }})">
                                 <svg width="36" height="36" viewBox="0 0 36 36" class="rounded border" :class="getToothClass({{ $t }})">
-                                    <polygon points="0,0 18,18 0,36" :fill="getSurfaceColor({{ $t }}, 'M')" stroke="white" stroke-width="0.5" />
-                                    <polygon points="36,0 18,18 36,36" :fill="getSurfaceColor({{ $t }}, 'D')" stroke="white" stroke-width="0.5" />
-                                    <polygon points="0,0 36,0 18,18" :fill="getSurfaceColor({{ $t }}, 'V')" stroke="white" stroke-width="0.5" />
-                                    <polygon points="0,36 36,36 18,18" :fill="getSurfaceColor({{ $t }}, 'L')" stroke="white" stroke-width="0.5" />
-                                    <circle cx="18" cy="18" r="7" :fill="getSurfaceColor({{ $t }}, 'O')" stroke="white" stroke-width="0.5" />
+                                    <rect width="36" height="36" fill="#f9fafb"/>
+                                    <polygon points="0,0 18,18 0,36" :fill="getSurfaceColor({{ $t }}, 'M')" stroke="#d1d5db" stroke-width="1" />
+                                    <polygon points="36,0 18,18 36,36" :fill="getSurfaceColor({{ $t }}, 'D')" stroke="#d1d5db" stroke-width="1" />
+                                    <polygon points="0,0 36,0 18,18" :fill="getSurfaceColor({{ $t }}, 'V')" stroke="#d1d5db" stroke-width="1" />
+                                    <polygon points="0,36 36,36 18,18" :fill="getSurfaceColor({{ $t }}, 'L')" stroke="#d1d5db" stroke-width="1" />
+                                    <circle cx="18" cy="18" r="7" :fill="getSurfaceColor({{ $t }}, 'O')" stroke="#d1d5db" stroke-width="1" />
                                 </svg>
                                 <span class="text-xs text-gray-400 mt-0.5">{{ $t }}</span>
                             </div>
