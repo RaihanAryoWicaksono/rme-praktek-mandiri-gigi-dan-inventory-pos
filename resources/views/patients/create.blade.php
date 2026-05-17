@@ -3,7 +3,7 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Daftar Pasien Baru</h2>
     </x-slot>
 
-    <div class="max-w-4xl space-y-5">
+    <div class="space-y-5">
         <div class="flex items-center gap-3">
             <a href="{{ route('patients.index') }}" class="text-gray-400 hover:text-gray-600 transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
