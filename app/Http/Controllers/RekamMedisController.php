@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\RekamMedis;
 use App\Models\Kunjungan;
 use App\Models\Patient;
+use App\Models\Treatment;
+use App\Models\Item;
 use Illuminate\Http\Request;
 
 class RekamMedisController extends Controller
@@ -35,7 +37,10 @@ class RekamMedisController extends Controller
             ->orderByDesc('tanggal_kunjungan')
             ->get();
 
-        return view('rekam-medis.create', compact('kunjungans', 'kunjungan'));
+        $treatments = Treatment::where('is_active', true)->orderBy('category')->orderBy('name')->get(['name', 'category']);
+        $obatItems  = Item::where('type', 'obat')->where('is_active', true)->orderBy('name')->get(['name', 'unit_use']);
+
+        return view('rekam-medis.create', compact('kunjungans', 'kunjungan', 'treatments', 'obatItems'));
     }
 
     public function store(Request $request)
@@ -88,7 +93,9 @@ class RekamMedisController extends Controller
     public function edit(RekamMedis $rekamMedis)
     {
         $rekamMedis->load('kunjungan.patient');
-        return view('rekam-medis.edit', compact('rekamMedis'));
+        $treatments = Treatment::where('is_active', true)->orderBy('category')->orderBy('name')->get(['name', 'category']);
+        $obatItems  = Item::where('type', 'obat')->where('is_active', true)->orderBy('name')->get(['name', 'unit_use']);
+        return view('rekam-medis.edit', compact('rekamMedis', 'treatments', 'obatItems'));
     }
 
     public function update(Request $request, RekamMedis $rekamMedis)
