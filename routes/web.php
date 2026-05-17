@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     // POS & Transactions
     Route::get('/pos', [TransactionController::class, 'create'])->name('pos.index');
     Route::post('/pos', [TransactionController::class, 'store'])->name('pos.store');
+    Route::get('/pos/patient/{patient}/rekam-medis', [TransactionController::class, 'getPatientRekamMedis'])->name('pos.patient.rekam-medis');
     Route::get('/transactions', [TransactionController::class, 'index'])->name('transactions.index');
     Route::get('/transactions/{transaction}', [TransactionController::class, 'show'])->name('transactions.show');
     Route::post('/transactions/{transaction}/void', [TransactionController::class, 'void'])->name('transactions.void');

@@ -18,12 +18,67 @@
                             <span class="w-5 h-5 rounded-full bg-teal-600 text-white text-xs flex items-center justify-center font-black">1</span>
                             Identitas Pasien
                         </label>
-                        <select x-model="patient_id" class="w-full border-gray-200 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm bg-white/80 text-sm">
+                        <select x-model="patient_id" @change="fetchRekamMedis(patient_id)" class="w-full border-gray-200 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm bg-white/80 text-sm">
                             <option value="">-- Pilih Pasien --</option>
                             @foreach($patients as $patient)
                                 <option value="{{ $patient->id }}">{{ $patient->no_rm }} — {{ $patient->name }} @if($patient->phone) ({{ $patient->phone }}) @endif</option>
                             @endforeach
                         </select>
+
+                        {{-- Loading indicator --}}
+                        <div x-show="rekam_medis_loading" class="mt-3 flex items-center gap-2 text-xs text-gray-400">
+                            <svg class="w-3.5 h-3.5 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                            </svg>
+                            Mengecek rekam medis hari ini...
+                        </div>
+
+                        {{-- Panel Rekam Medis Ditemukan --}}
+                        <div x-show="rekam_medis && rekam_medis.found" x-cloak class="mt-3 bg-teal-50 border border-teal-200 rounded-xl p-4 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-teal-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                                <p class="text-sm font-bold text-teal-800">Rekam Medis Hari Ini Tersedia</p>
+                            </div>
+
+                            <div class="text-xs space-y-1">
+                                <p class="text-gray-600"><span class="font-semibold text-gray-700">Diagnosis:</span> <span x-text="rekam_medis.diagnosis"></span></p>
+                                <p class="text-gray-600 whitespace-pre-line"><span class="font-semibold text-gray-700">Tindakan:</span> <span x-text="rekam_medis.tindakan"></span></p>
+                                <p x-show="rekam_medis.resep" class="text-gray-600 whitespace-pre-line"><span class="font-semibold text-gray-700">Resep:</span> <span x-text="rekam_medis.resep"></span></p>
+                            </div>
+
+                            <template x-if="rekam_medis.matched_treatment_ids && rekam_medis.matched_treatment_ids.length > 0">
+                                <div>
+                                    <p class="text-xs font-semibold text-gray-500 mb-1.5">Tindakan cocok di master:</p>
+                                    <div class="flex flex-wrap gap-1 mb-3">
+                                        <template x-for="id in rekam_medis.matched_treatment_ids" :key="id">
+                                            <span class="px-2 py-0.5 bg-white border border-teal-300 text-teal-700 rounded-full text-xs font-medium"
+                                                  x-text="treatments_master.find(t => t.id === id)?.name ?? id"></span>
+                                        </template>
+                                    </div>
+                                    <button @click="loadFromRekamMedis()"
+                                            class="w-full py-2 bg-teal-600 text-white rounded-lg text-sm font-bold hover:bg-teal-700 active:scale-95 transition">
+                                        Muat Tindakan ke Kasir
+                                    </button>
+                                </div>
+                            </template>
+
+                            <template x-if="!rekam_medis.matched_treatment_ids || rekam_medis.matched_treatment_ids.length === 0">
+                                <p class="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                                    Tindakan di rekam medis tidak cocok dengan master tindakan. Tambahkan tindakan secara manual.
+                                </p>
+                            </template>
+                        </div>
+
+                        {{-- Panel Tidak Ada Rekam Medis --}}
+                        <div x-show="rekam_medis && !rekam_medis.found" x-cloak class="mt-3 text-xs text-gray-400 flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            Tidak ada rekam medis hari ini untuk pasien ini.
+                        </div>
                     </div>
 
                     <!-- Section 2: Tindakan & Bahan -->
@@ -276,10 +331,12 @@
                 selected_template_id: '',
                 selected_item_id: '',
 
-                
+                rekam_medis: null,
+                rekam_medis_loading: false,
+
                 treatments_master: @json($treatments),
                 items_master: @json($items),
-                
+
                 cart_treatments: [],
                 cart_items: [],
                 payment_method: 'cash',
@@ -391,6 +448,58 @@
 
                 removeItem(tempId) {
                     this.cart_items = this.cart_items.filter(i => i.temp_id !== tempId);
+                },
+
+                async fetchRekamMedis(patientId) {
+                    this.rekam_medis = null;
+                    if (!patientId) return;
+                    this.rekam_medis_loading = true;
+                    try {
+                        const res = await fetch(`/pos/patient/${patientId}/rekam-medis`);
+                        this.rekam_medis = await res.json();
+                    } catch(e) {
+                        console.error(e);
+                    } finally {
+                        this.rekam_medis_loading = false;
+                    }
+                },
+
+                loadFromRekamMedis() {
+                    if (!this.rekam_medis?.matched_treatment_ids?.length) return;
+                    this.rekam_medis.matched_treatment_ids.forEach(id => {
+                        if (this.cart_treatments.find(t => t.id === id)) return;
+                        const master = this.treatments_master.find(t => t.id === id);
+                        if (!master) return;
+
+                        let templateToUse = null;
+                        if (master.bom_templates?.length === 1) {
+                            templateToUse = master.bom_templates[0];
+                        }
+
+                        const idx = this.cart_treatments.length;
+                        this.cart_treatments.push({
+                            id: master.id,
+                            name: master.name,
+                            price: master.base_price,
+                            template_name: templateToUse ? templateToUse.name : null
+                        });
+
+                        if (templateToUse) {
+                            templateToUse.items.forEach(bomItem => {
+                                const currentStock = parseFloat(bomItem.item.batches_sum_stock || 0);
+                                this.cart_items.push({
+                                    temp_id: Date.now() + Math.random(),
+                                    item_id: bomItem.item_id,
+                                    name: bomItem.item.name,
+                                    quantity: currentStock > 0 ? bomItem.quantity : 0,
+                                    price: parseFloat(bomItem.item.selling_price) || 0,
+                                    unit: bomItem.unit,
+                                    source_treatment_idx: idx,
+                                    is_out_of_stock: currentStock <= 0
+                                });
+                            });
+                        }
+                    });
                 },
 
                 addMaterialToTreatment(trIdx, itemId) {
