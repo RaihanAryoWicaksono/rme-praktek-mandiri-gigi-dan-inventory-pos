@@ -177,6 +177,18 @@
                 vertical-align: middle !important;
             }
             table.dataTable tbody tr:last-child td { border-bottom: none !important; }
+
+            /* Kolom AKSI: selalu center, tanpa sort arrow */
+            table.dataTable thead th.col-aksi,
+            table.dataTable thead th.col-aksi.sorting,
+            table.dataTable thead th.col-aksi.sorting_asc,
+            table.dataTable thead th.col-aksi.sorting_desc {
+                text-align: center !important;
+                padding-right: 1rem !important;
+            }
+            table.dataTable thead th.col-aksi::before,
+            table.dataTable thead th.col-aksi::after { display: none !important; }
+            table.dataTable tbody td.col-aksi { text-align: center !important; }
             
             /* Theme overrides */
             .bg-indigo-600, .bg-indigo-500 { background-color: var(--brand-teal) !important; }
@@ -328,6 +340,9 @@
                         pageLength: 25,
                         ordering: true,
                         responsive: true,
+                        columnDefs: [
+                            { targets: '.col-aksi', orderable: false, className: 'col-aksi' }
+                        ],
                         drawCallback: function(settings) {
                             var api = this.api();
                             if (api.data().length === 0) {

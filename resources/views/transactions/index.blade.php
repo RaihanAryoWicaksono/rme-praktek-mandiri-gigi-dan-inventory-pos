@@ -40,7 +40,7 @@
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Pasien</th>
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Total</th>
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
-                                <th class="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
+                                <th class="col-aksi text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -57,13 +57,14 @@
                                             <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-700">Selesai</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end gap-3">
-                                            <a href="{{ route('transactions.show', $trx) }}" class="text-xs font-medium text-teal-600 hover:text-teal-800">Detail</a>
+                                    <td class="col-aksi px-4 py-3">
+                                        <div class="flex items-center justify-center gap-1">
+                                            <a href="{{ route('transactions.show', $trx) }}" class="text-xs font-semibold text-teal-600 hover:text-teal-800 transition-colors px-2 py-1 rounded hover:bg-teal-50">Detail</a>
                                             @if($trx->status !== 'cancelled')
+                                                <span class="text-gray-200">|</span>
                                                 <button type="button"
                                                         @click="$dispatch('open-void-modal', { url: '{{ route('transactions.void', $trx) }}', number: '{{ addslashes($trx->transaction_number) }}' })"
-                                                        class="text-xs font-medium text-red-500 hover:text-red-700">Batalkan</button>
+                                                        class="text-xs font-semibold text-red-500 hover:text-red-700 transition-colors px-2 py-1 rounded hover:bg-red-50">Batalkan</button>
                                             @endif
                                         </div>
                                     </td>

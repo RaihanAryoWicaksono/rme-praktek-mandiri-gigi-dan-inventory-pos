@@ -39,7 +39,7 @@
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Kategori</th>
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Tarif Dasar</th>
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
-                                <th class="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
+                                <th class="col-aksi text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -55,13 +55,15 @@
                                             <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">Nonaktif</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end gap-3">
-                                            <a href="{{ route('treatments.bom.index', $treatment) }}" class="text-xs font-medium text-teal-600 hover:text-teal-800">Kelola BOM</a>
-                                            <a href="{{ route('treatments.edit', $treatment) }}" class="text-xs font-medium text-blue-600 hover:text-blue-800">Edit</a>
+                                    <td class="col-aksi px-4 py-3">
+                                        <div class="flex items-center justify-center gap-1">
+                                            <a href="{{ route('treatments.bom.index', $treatment) }}" class="text-xs font-semibold text-teal-600 hover:text-teal-800 transition-colors px-2 py-1 rounded hover:bg-teal-50">Kelola BOM</a>
+                                            <span class="text-gray-200">|</span>
+                                            <a href="{{ route('treatments.edit', $treatment) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors px-2 py-1 rounded hover:bg-blue-50">Edit</a>
+                                            <span class="text-gray-200">|</span>
                                             <button type="button"
                                                     @click="$dispatch('open-delete-modal', { url: '{{ route('treatments.destroy', $treatment) }}', name: '{{ addslashes($treatment->name) }}' })"
-                                                    class="text-xs font-medium text-red-500 hover:text-red-700">Hapus</button>
+                                                    class="text-xs font-semibold text-red-500 hover:text-red-700 transition-colors px-2 py-1 rounded hover:bg-red-50">Hapus</button>
                                         </div>
                                     </td>
                                 </tr>

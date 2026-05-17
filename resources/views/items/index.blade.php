@@ -39,7 +39,7 @@
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Jenis</th>
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Satuan</th>
                                 <th class="text-left px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
-                                <th class="text-right px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
+                                <th class="col-aksi text-center px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -63,12 +63,13 @@
                                             <span class="inline-flex text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-700">Nonaktif</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-right">
-                                        <div class="flex items-center justify-end gap-3">
-                                            <a href="{{ route('items.edit', $item) }}" class="text-xs font-medium text-blue-600 hover:text-blue-800">Edit</a>
+                                    <td class="col-aksi px-4 py-3">
+                                        <div class="flex items-center justify-center gap-1">
+                                            <a href="{{ route('items.edit', $item) }}" class="text-xs font-semibold text-blue-600 hover:text-blue-800 transition-colors px-2 py-1 rounded hover:bg-blue-50">Edit</a>
+                                            <span class="text-gray-200">|</span>
                                             <button type="button"
                                                     @click="$dispatch('open-delete-modal', { url: '{{ route('items.destroy', $item) }}', name: '{{ addslashes($item->name) }}' })"
-                                                    class="text-xs font-medium text-red-500 hover:text-red-700">Hapus</button>
+                                                    class="text-xs font-semibold text-red-500 hover:text-red-700 transition-colors px-2 py-1 rounded hover:bg-red-50">Hapus</button>
                                         </div>
                                     </td>
                                 </tr>
