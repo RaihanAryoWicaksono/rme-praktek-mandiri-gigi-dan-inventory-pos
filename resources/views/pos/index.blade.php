@@ -21,7 +21,7 @@
                         <select x-model="patient_id" class="w-full border-gray-200 focus:border-teal-500 focus:ring-teal-500 rounded-lg shadow-sm bg-white/80 text-sm">
                             <option value="">-- Pilih Pasien --</option>
                             @foreach($patients as $patient)
-                                <option value="{{ $patient->id }}">{{ $patient->name }} @if($patient->phone) ({{ $patient->phone }}) @endif</option>
+                                <option value="{{ $patient->id }}">{{ $patient->no_rm }} — {{ $patient->name }} @if($patient->phone) ({{ $patient->phone }}) @endif</option>
                             @endforeach
                         </select>
                     </div>
@@ -179,8 +179,9 @@
                                             <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-500">
                                                 {{ $trx->created_at->format('d/m/Y H:i') }}
                                             </td>
-                                            <td class="px-5 py-3 whitespace-nowrap text-sm text-gray-900 font-medium">
-                                                {{ $trx->patient->name }}
+                                            <td class="px-5 py-3 whitespace-nowrap">
+                                                <p class="text-sm text-gray-900 font-medium">{{ $trx->patient->name }}</p>
+                                                <p class="text-xs font-mono text-teal-600">{{ $trx->patient->no_rm }}</p>
                                             </td>
                                             <td class="px-5 py-3 whitespace-nowrap text-sm font-black text-gray-900 text-right">
                                                 Rp {{ number_format($trx->total_amount, 0, ',', '.') }}

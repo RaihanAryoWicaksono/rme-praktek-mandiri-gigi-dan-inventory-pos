@@ -48,7 +48,10 @@
                                 <tr class="hover:bg-gray-50 transition-colors">
                                     <td class="px-4 py-3 font-mono font-bold text-gray-800 text-xs">{{ $trx->transaction_number }}</td>
                                     <td class="px-4 py-3 text-gray-500 whitespace-nowrap">{{ $trx->date->format('d/m/Y') }}</td>
-                                    <td class="px-4 py-3 font-medium text-gray-900">{{ $trx->patient->name }}</td>
+                                    <td class="px-4 py-3">
+                                        <p class="font-medium text-gray-900">{{ $trx->patient->name }}</p>
+                                        <p class="text-xs font-mono text-teal-600">{{ $trx->patient->no_rm }}</p>
+                                    </td>
                                     <td class="px-4 py-3 font-bold text-teal-600">Rp {{ number_format($trx->total_amount, 0, ',', '.') }}</td>
                                     <td class="px-4 py-3">
                                         @if($trx->status === 'cancelled')

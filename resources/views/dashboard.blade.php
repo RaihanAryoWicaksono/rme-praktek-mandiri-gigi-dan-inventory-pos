@@ -155,7 +155,10 @@
                             <tr class="hover:bg-gray-50 transition">
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-indigo-600">{{ $trx->transaction_number }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $trx->created_at->diffForHumans() }}</td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 uppercase font-mono">{{ $trx->patient->name }}</td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <p class="text-sm text-gray-900 font-medium">{{ $trx->patient->name }}</p>
+                                    <p class="text-xs font-mono text-teal-600">{{ $trx->patient->no_rm }}</p>
+                                </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-black text-gray-900">Rp {{ number_format($trx->total_amount, 0, ',', '.') }}</td>
                                 <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
                                     <a href="{{ route('transactions.show', $trx) }}" class="text-indigo-600 hover:text-indigo-900">Detail</a>

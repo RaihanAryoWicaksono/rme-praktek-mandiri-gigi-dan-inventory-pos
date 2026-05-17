@@ -33,7 +33,8 @@
                     <div>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Informasi Pasien</p>
                         <h3 class="text-2xl font-black text-gray-900">{{ $transaction->patient->name }}</h3>
-                        <p class="text-gray-500">{{ $transaction->patient->phone ?? '-' }}</p>
+                        <p class="text-sm font-mono text-teal-600 font-semibold">{{ $transaction->patient->no_rm }}</p>
+                        <p class="text-gray-500 text-sm">{{ $transaction->patient->phone ?? '-' }}</p>
                     </div>
                     <div class="text-right">
                         @if($transaction->status === 'cancelled')
