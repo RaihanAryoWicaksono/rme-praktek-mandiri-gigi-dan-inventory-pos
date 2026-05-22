@@ -370,6 +370,7 @@
                     speak(`Pasien baru nomor antrian ${p.no}, ${p.nama}, telah mendaftar.`);
                 });
                 lastCreatedAt = data.latest_created_at;
+                lastUpdatedAt = data.latest_updated_at;
                 knownPatients = data.patients;
                 updateCounters(data);
                 return;
