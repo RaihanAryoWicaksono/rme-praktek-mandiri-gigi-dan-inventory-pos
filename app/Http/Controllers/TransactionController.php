@@ -64,7 +64,6 @@ class TransactionController extends Controller
     {
         $rekamMedis = RekamMedis::whereHas('kunjungan', fn($q) =>
             $q->where('patient_id', $patient->id)
-              ->whereDate('tanggal_kunjungan', Carbon::today())
         )->with('kunjungan')->latest()->first();
 
         if (!$rekamMedis) {
