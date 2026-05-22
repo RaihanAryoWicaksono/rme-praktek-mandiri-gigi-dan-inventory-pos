@@ -15,7 +15,37 @@ use App\Http\Controllers\RekamMedisController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return view('welcome');
+    $kunjunganHariIni = \App\Models\Kunjungan::with('patient')
+        ->whereDate('tanggal_kunjungan', \Carbon\Carbon::today())
+        ->orderBy('created_at')
+        ->get();
+    return view('welcome', compact('kunjunganHariIni'));
+});
+
+Route::get('/api/antrian-status', function () {
+    $kunjungan = \App\Models\Kunjungan::with('patient')
+        ->whereDate('tanggal_kunjungan', \Carbon\Carbon::today())
+        ->orderBy('created_at')
+        ->get();
+
+    $latest = $kunjungan->last();
+
+    $patients = $kunjungan->values()->map(fn($k, $i) => [
+        'no'         => $i + 1,
+        'nama'       => $k->patient->display_name,
+        'status'     => $k->status,
+        'updated_at' => $k->updated_at->toISOString(),
+    ]);
+
+    return response()->json([
+        'total'             => $kunjungan->count(),
+        'menunggu'          => $kunjungan->where('status', 'antrian')->count(),
+        'diperiksa'         => $kunjungan->where('status', 'sedang_diperiksa')->count(),
+        'selesai'           => $kunjungan->where('status', 'selesai')->count(),
+        'patients'          => $patients,
+        'latest_created_at' => $latest?->created_at->toISOString(),
+        'latest_updated_at' => $latest?->updated_at->toISOString(),
+    ]);
 });
 
 Route::get('/dashboard', [DashboardController::class, 'index'])

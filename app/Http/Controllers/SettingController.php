@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Setting;
+use App\Models\Kunjungan;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class SettingController extends Controller
@@ -10,7 +12,11 @@ class SettingController extends Controller
     public function index()
     {
         $settings = Setting::all()->pluck('value', 'key')->toArray();
-        return view('settings.index', compact('settings'));
+        $kunjunganHariIni = Kunjungan::with(['patient', 'rekamMedis'])
+            ->whereDate('tanggal_kunjungan', Carbon::today())
+            ->orderBy('created_at')
+            ->get();
+        return view('settings.index', compact('settings', 'kunjunganHariIni'));
     }
 
     public function update(Request $request)

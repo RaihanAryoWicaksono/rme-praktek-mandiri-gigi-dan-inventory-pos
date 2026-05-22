@@ -21,6 +21,8 @@ class Kunjungan extends Model
         'status',
     ];
 
+    protected $appends = ['label_status', 'badge_status'];
+
     protected $casts = [
         'tanggal_kunjungan' => 'date',
     ];

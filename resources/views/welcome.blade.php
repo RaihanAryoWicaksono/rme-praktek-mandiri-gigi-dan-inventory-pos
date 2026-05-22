@@ -2,6 +2,21 @@
 
 @section('title', 'drg. Moh Ariv Widodo Dental Clinic')
 
+@push('styles')
+<style>
+    @@keyframes slideInRight {
+        from { transform: translateX(110%); opacity: 0; }
+        to   { transform: translateX(0);   opacity: 1; }
+    }
+    @@keyframes slideOutRight {
+        from { transform: translateX(0);   opacity: 1; }
+        to   { transform: translateX(110%); opacity: 0; }
+    }
+    .notif-enter { animation: slideInRight 0.4s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+    .notif-exit  { animation: slideOutRight 0.3s ease-in forwards; }
+</style>
+@endpush
+
 @section('content')
 <section id="home" class="relative overflow-hidden bg-gradient-to-r from-white via-white to-teal-50 pt-10">
     <div class="absolute right-0 top-0 hidden h-full w-1/2 bg-gradient-to-br from-teal-300 via-teal-400 to-teal-500 lg:block"></div>
@@ -124,18 +139,97 @@
 
 <section id="appointment" class="bg-white py-16 lg:py-20">
     <div class="mx-auto max-w-7xl px-6 lg:px-12">
-        <div class="grid items-center gap-12 rounded-[2rem] bg-gradient-to-r from-slate-50 to-teal-50 px-6 py-10 lg:grid-cols-2 lg:px-12">
-            <div>
-                <p class="text-sm font-semibold text-teal-500">Starting Now</p>
-                <h2 class="mt-3 max-w-xl text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">Let's Start Taking Care Of Your Teeth</h2>
-                <p class="mt-6 max-w-xl text-base leading-8 text-gray-500">Perawatan gigi yang rutin akan membantu mencegah masalah yang lebih serius. Mulai langkah kecil hari ini untuk senyum yang lebih sehat dan percaya diri.</p>
-                <div class="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center">
-                    <a href="#" class="inline-flex items-center justify-center rounded-full bg-teal-500 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-teal-600">Get Started</a>
-                    <a href="#" class="text-sm font-semibold text-slate-700 transition hover:text-teal-500">Terms and use</a>
+        <div class="grid items-start gap-10 rounded-[2rem] bg-gradient-to-r from-slate-50 to-teal-50 px-6 py-10 lg:grid-cols-2 lg:px-12">
+
+            {{-- Kiri: CTA --}}
+            <div class="flex flex-col justify-center">
+                <p class="text-sm font-semibold text-teal-500">Antrian Hari Ini</p>
+                <h2 class="mt-3 max-w-xl text-3xl font-bold leading-tight text-slate-900 sm:text-4xl">Cek Nomor Antrian Anda</h2>
+                <p class="mt-6 max-w-xl text-base leading-8 text-gray-500">Pantau posisi antrian Anda secara langsung. Daftar di bawah diperbarui secara real-time sesuai jadwal kunjungan hari ini.</p>
+                <div class="mt-6 flex items-center gap-3">
+                    <span class="inline-flex items-center gap-2 rounded-full bg-teal-100 px-4 py-2 text-sm font-semibold text-teal-700">
+                        <span class="h-2 w-2 rounded-full bg-teal-500 animate-pulse"></span>
+                        <span id="antrian-badge-count">{{ $kunjunganHariIni->count() }} Pasien Terdaftar Hari Ini</span>
+                    </span>
+                </div>
+                <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+                    <div class="rounded-2xl bg-yellow-50 border border-yellow-100 px-4 py-4">
+                        <p id="count-menunggu" class="text-2xl font-bold text-yellow-600">{{ $kunjunganHariIni->where('status', 'antrian')->count() }}</p>
+                        <p class="mt-1 text-xs text-yellow-700 font-medium">Menunggu</p>
+                    </div>
+                    <div class="rounded-2xl bg-blue-50 border border-blue-100 px-4 py-4">
+                        <p id="count-diperiksa" class="text-2xl font-bold text-blue-600">{{ $kunjunganHariIni->where('status', 'sedang_diperiksa')->count() }}</p>
+                        <p class="mt-1 text-xs text-blue-700 font-medium">Diperiksa</p>
+                    </div>
+                    <div class="rounded-2xl bg-green-50 border border-green-100 px-4 py-4">
+                        <p id="count-selesai" class="text-2xl font-bold text-green-600">{{ $kunjunganHariIni->where('status', 'selesai')->count() }}</p>
+                        <p class="mt-1 text-xs text-green-700 font-medium">Selesai</p>
+                    </div>
                 </div>
             </div>
-            <div class="mx-auto max-w-md">
-                <img src="https://images.unsplash.com/photo-1579684385127-1ef15d508118?auto=format&fit=crop&w=900&q=80" alt="Ilustrasi dokter gigi" class="w-full rounded-[2rem] object-cover shadow-lg">
+
+            {{-- Kanan: Papan antrian --}}
+            <div class="rounded-2xl bg-white shadow-sm border border-gray-100 overflow-hidden">
+                <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-teal-500 to-teal-600">
+                    <div class="flex items-center gap-2 text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                        <span class="font-bold text-sm">Antrian Pasien</span>
+                    </div>
+                    <span class="text-xs text-teal-100">{{ \Carbon\Carbon::today()->format('d M Y') }}</span>
+                </div>
+
+                @if($kunjunganHariIni->isEmpty())
+                    <div class="py-14 text-center text-gray-400">
+                        <svg class="w-10 h-10 mx-auto mb-3 text-gray-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <p class="text-sm font-medium">Belum ada antrian hari ini</p>
+                        <p class="text-xs mt-1">Silakan hubungi klinik untuk mendaftar</p>
+                    </div>
+                @else
+                    <div class="divide-y divide-gray-50 max-h-80 overflow-y-auto">
+                        @foreach($kunjunganHariIni as $index => $k)
+                            @php
+                                $firstName = explode(' ', $k->patient->display_name)[0];
+                                $statusColor = match($k->status) {
+                                    'antrian'          => ['dot' => 'bg-yellow-400', 'badge' => 'bg-yellow-100 text-yellow-800', 'label' => 'Menunggu'],
+                                    'sedang_diperiksa' => ['dot' => 'bg-blue-400',   'badge' => 'bg-blue-100 text-blue-800',   'label' => 'Diperiksa'],
+                                    'selesai'          => ['dot' => 'bg-green-400',  'badge' => 'bg-green-100 text-green-800', 'label' => 'Selesai'],
+                                    default            => ['dot' => 'bg-gray-400',   'badge' => 'bg-gray-100 text-gray-800',   'label' => $k->status],
+                                };
+                            @endphp
+                            <div class="flex items-center gap-4 px-5 py-3.5 {{ $k->status === 'sedang_diperiksa' ? 'bg-blue-50/50' : '' }}">
+                                {{-- Nomor antrian --}}
+                                <div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shrink-0
+                                    {{ $k->status === 'sedang_diperiksa' ? 'bg-blue-500 text-white' : 'bg-teal-50 text-teal-700 border border-teal-100' }}">
+                                    {{ $index + 1 }}
+                                </div>
+
+                                {{-- Nama (hanya nama depan untuk privasi) --}}
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-slate-900">{{ $firstName }}
+                                        @if($k->status === 'sedang_diperiksa')
+                                            <span class="text-xs text-blue-500 font-medium">(Sedang dilayani)</span>
+                                        @endif
+                                    </p>
+                                    <p class="text-xs text-gray-400">{{ $k->tanggal_kunjungan->format('d M Y') }}</p>
+                                </div>
+
+                                {{-- Status --}}
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold {{ $statusColor['badge'] }} shrink-0">
+                                    <span class="w-1.5 h-1.5 rounded-full {{ $statusColor['dot'] }}"></span>
+                                    {{ $statusColor['label'] }}
+                                </span>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="px-5 py-3 border-t border-gray-100 bg-gray-50 text-center">
+                    <p class="text-xs text-gray-400">Halaman ini diperbarui setiap kali Anda refresh</p>
+                </div>
             </div>
         </div>
     </div>
@@ -170,4 +264,140 @@
         </div>
     </div>
 </section>
+{{-- Popup notification container --}}
+<div id="notif-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm pointer-events-none"></div>
+
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const pageLoadTime = new Date().toISOString();
+
+    @php
+        $latestKunjungan = $kunjunganHariIni->last();
+        $initialPatients = $kunjunganHariIni->values()->map(fn($k, $i) => [
+            'no'         => $i + 1,
+            'nama'       => $k->patient->display_name,
+            'status'     => $k->status,
+            'updated_at' => $k->updated_at->toISOString(),
+        ]);
+    @endphp
+
+    let lastCreatedAt = "{{ $latestKunjungan ? $latestKunjungan->created_at->toISOString() : '' }}";
+    let lastUpdatedAt = "{{ $latestKunjungan ? $latestKunjungan->updated_at->toISOString() : '' }}";
+    let knownPatients = {!! json_encode($initialPatients) !!}; // [{no, nama, status, updated_at}]
+
+    const container = document.getElementById('notif-container');
+
+    // ── Suara pengumuman ──────────────────────────────────────────────────────
+    function speak(text) {
+        if (!('speechSynthesis' in window)) return;
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang  = 'id-ID';
+        u.rate  = 0.9;
+        u.pitch = 1;
+        window.speechSynthesis.speak(u);
+    }
+
+    // ── Popup notifikasi ──────────────────────────────────────────────────────
+    function showNotif(type, no, nama, pesan, subtext) {
+        const cfg = {
+            panggil : { border:'border-blue-300',  bg:'bg-blue-600',   noBg:'bg-white text-blue-600', icon:'🔔' },
+            baru    : { border:'border-teal-300',   bg:'bg-teal-600',   noBg:'bg-white text-teal-600', icon:'👤' },
+            selesai : { border:'border-green-300',  bg:'bg-green-600',  noBg:'bg-white text-green-600',icon:'✓'  },
+        };
+        const c  = cfg[type] || cfg.baru;
+        const el = document.createElement('div');
+        el.className = `notif-enter pointer-events-auto w-96 rounded-2xl overflow-hidden shadow-2xl border ${c.border}`;
+        el.innerHTML = `
+            <div class="${c.bg} px-5 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">${c.icon}</span>
+                    <div>
+                        <p class="text-white text-xs font-semibold uppercase tracking-widest opacity-80">${pesan}</p>
+                        <p class="text-white text-xl font-black leading-tight">No. ${no} — ${nama}</p>
+                    </div>
+                </div>
+                <button class="dismiss-btn text-white/60 hover:text-white transition p-1 rounded-lg hover:bg-white/10 ml-2 shrink-0">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="bg-white px-5 py-2.5">
+                <p class="text-sm text-gray-500">${subtext}</p>
+            </div>`;
+
+        el.querySelector('.dismiss-btn').addEventListener('click', () => dismiss(el));
+        container.appendChild(el);
+        setTimeout(() => dismiss(el), 8000);
+    }
+
+    function dismiss(el) {
+        if (!el || el._out) return;
+        el._out = true;
+        el.classList.remove('notif-enter');
+        el.classList.add('notif-exit');
+        setTimeout(() => el.remove(), 300);
+    }
+
+    // ── Update counter di halaman ─────────────────────────────────────────────
+    function updateCounters(data) {
+        const b = document.getElementById('antrian-badge-count');
+        const m = document.getElementById('count-menunggu');
+        const d = document.getElementById('count-diperiksa');
+        const s = document.getElementById('count-selesai');
+        if (b) b.textContent = data.total + ' Pasien Terdaftar Hari Ini';
+        if (m) m.textContent = data.menunggu;
+        if (d) d.textContent = data.diperiksa;
+        if (s) s.textContent = data.selesai;
+    }
+
+    // ── Polling ───────────────────────────────────────────────────────────────
+    async function poll() {
+        try {
+            const res  = await fetch('/api/antrian-status');
+            if (!res.ok) return;
+            const data = await res.json();
+
+            // 1. Pasien baru masuk (created_at lebih baru)
+            if (data.latest_created_at && data.latest_created_at > lastCreatedAt && data.latest_created_at > pageLoadTime) {
+                const newOnes = data.patients.filter(p => !knownPatients.find(k => k.no === p.no));
+                newOnes.forEach(p => {
+                    showNotif('baru', p.no, p.nama, 'Pasien Baru Mendaftar', 'Silakan menunggu, antrian Anda telah terdaftar.');
+                    speak(`Pasien baru nomor antrian ${p.no}, ${p.nama}, telah mendaftar.`);
+                });
+                lastCreatedAt = data.latest_created_at;
+                knownPatients = data.patients;
+                updateCounters(data);
+                return;
+            }
+
+            // 2. Status berubah — deteksi per-pasien
+            if (data.latest_updated_at && data.latest_updated_at > lastUpdatedAt && data.latest_updated_at > pageLoadTime) {
+                data.patients.forEach(p => {
+                    const prev = knownPatients.find(k => k.no === p.no);
+                    if (!prev || prev.status === p.status) return;
+
+                    if (p.status === 'sedang_diperiksa') {
+                        showNotif('panggil', p.no, p.nama, 'Dipanggil — Silakan Masuk', 'Segera menuju ruang periksa. Dokter siap melayani Anda.');
+                        speak(`Nomor antrian ${p.no}, ${p.nama}, silakan masuk ke ruang periksa.`);
+                    } else if (p.status === 'selesai') {
+                        showNotif('selesai', p.no, p.nama, 'Selesai Diperiksa', 'Terima kasih telah berkunjung. Semoga lekas sembuh.');
+                        speak(`Nomor antrian ${p.no}, ${p.nama}, terima kasih. Pemeriksaan selesai.`);
+                    }
+                });
+                lastUpdatedAt = data.latest_updated_at;
+                knownPatients = data.patients;
+                updateCounters(data);
+            }
+
+        } catch (e) { /* abaikan jika offline */ }
+    }
+
+    setInterval(poll, 10000);
+})();
+</script>
+@endpush
