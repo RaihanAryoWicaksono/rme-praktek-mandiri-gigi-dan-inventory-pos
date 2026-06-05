@@ -1,0 +1,264 @@
+@startuml Use Case Diagram — Dental Medical Inventory POS
+
+!theme cerulean-outline
+skinparam defaultFontName Arial
+skinparam defaultFontSize 12
+skinparam packageStyle rectangle
+skinparam linetype ortho
+
+skinparam actor {
+    BackgroundColor #E8F5E9
+    BorderColor #388E3C
+    FontColor #1B5E20
+    FontStyle bold
+}
+
+skinparam usecase {
+    BackgroundColor #E3F2FD
+    BorderColor #1565C0
+    FontColor #0D47A1
+    ArrowColor #1565C0
+}
+
+skinparam package {
+    BackgroundColor #FAFAFA
+    BorderColor #BDBDBD
+    FontColor #424242
+    FontStyle bold
+}
+
+' ─────────────────────────────────────────────────────────────
+'  AKTOR
+' ─────────────────────────────────────────────────────────────
+actor "Pengunjung" as Guest
+actor "Admin /\nStaf Klinik"  as Admin
+
+' ─────────────────────────────────────────────────────────────
+'  PAKET USE CASE
+' ─────────────────────────────────────────────────────────────
+
+package "Halaman Publik" as PKG_PUBLIC {
+    usecase "Lihat Landing Page"           as UC11
+    usecase "Pantau Antrian\nReal-Time"    as UC12
+    usecase "Aktifkan\nNotifikasi Suara"   as UC13
+}
+
+package "Autentikasi" as PKG_AUTH {
+    usecase "Register Akun"       as UC01
+    usecase "Login"               as UC02
+    usecase "Logout"              as UC03
+    usecase "Lupa Password"       as UC04
+    usecase "Reset Password"      as UC05
+    usecase "Edit Profil"         as UC06
+    usecase "Hapus Akun"          as UC07
+}
+
+package "Dashboard" as PKG_DASH {
+    usecase "Lihat Dashboard"                    as UC21
+    usecase "Pantau Pendapatan Harian"           as UC22
+    usecase "Peringatan Stok Rendah"             as UC23
+    usecase "Peringatan Batch Kedaluwarsa"       as UC24
+    usecase "Grafik Pendapatan 7 Hari"           as UC25
+    usecase "Lihat Transaksi Terbaru"            as UC26
+}
+
+package "Manajemen Pasien" as PKG_PASIEN {
+    usecase "Lihat Daftar Pasien"   as UC31
+    usecase "Cari Pasien"           as UC32
+    usecase "Tambah Pasien"         as UC33
+    usecase "Lihat Detail Pasien"   as UC34
+    usecase "Edit Data Pasien"      as UC35
+    usecase "Upload Foto Pasien"    as UC36
+    usecase "Hapus Foto Pasien"     as UC37
+    usecase "Hapus Pasien"          as UC38
+}
+
+package "Kunjungan (Antrian)" as PKG_KUNJUNGAN {
+    usecase "Lihat Daftar Kunjungan"    as UC41
+    usecase "Filter Kunjungan"          as UC42
+    usecase "Daftarkan Kunjungan Baru"  as UC43
+    usecase "Lihat Detail Kunjungan"    as UC44
+    usecase "Ubah Status Kunjungan"     as UC45
+    usecase "Edit Data Kunjungan"       as UC46
+    usecase "Hapus Kunjungan"           as UC47
+}
+
+package "Rekam Medis" as PKG_RM {
+    usecase "Lihat Daftar Rekam Medis"   as UC51
+    usecase "Cari Rekam Medis"           as UC52
+    usecase "Buat Rekam Medis"           as UC53
+    usecase "Isi Diagnosis & Tindakan"   as UC54
+    usecase "Isi Resep Obat"             as UC55
+    usecase "Isi Data Odontogram"        as UC56
+    usecase "Upload Foto Rekam Medis"    as UC57
+    usecase "Lihat Detail Rekam Medis"   as UC58
+    usecase "Edit Rekam Medis"           as UC59
+    usecase "Hapus Rekam Medis"          as UC60
+}
+
+package "Master Tindakan & BOM" as PKG_TREATMENT {
+    usecase "Lihat Daftar Tindakan"    as UC71
+    usecase "Tambah Tindakan"          as UC72
+    usecase "Edit Tindakan"            as UC73
+    usecase "Hapus Tindakan"           as UC74
+    usecase "Lihat BOM Template"       as UC81
+    usecase "Tambah BOM Template"      as UC82
+    usecase "Edit BOM Template"        as UC83
+    usecase "Hapus BOM Template"       as UC84
+}
+
+package "Inventori & Stok" as PKG_STOK {
+    usecase "Lihat Daftar Item"         as UC91
+    usecase "Tambah Item"               as UC92
+    usecase "Edit Item"                 as UC93
+    usecase "Hapus Item"                as UC94
+    usecase "Lihat Riwayat Mutasi Stok" as UC101
+    usecase "Penerimaan Stok (Inbound)" as UC102
+    usecase "Koreksi Stok"              as UC103
+}
+
+package "POS & Transaksi" as PKG_POS {
+    usecase "Buka Halaman POS"               as UC111
+    usecase "Pilih Pasien"                   as UC112
+    usecase "Muat Rekam Medis Terakhir"      as UC113
+    usecase "Tambah Tindakan ke Transaksi"   as UC114
+    usecase "Tambah Item / Obat"             as UC115
+    usecase "Proses Pembayaran (Cash/QRIS)"  as UC116
+    usecase "Lihat Daftar Transaksi"         as UC117
+    usecase "Lihat Detail Transaksi"         as UC118
+    usecase "Cetak Struk"                    as UC119
+    usecase "Void (Batalkan) Transaksi"      as UC120
+}
+
+package "Laporan" as PKG_LAPORAN {
+    usecase "Laporan Pendapatan"                    as UC131
+    usecase "Filter Rentang Tanggal"                as UC132
+    usecase "Ekspor CSV"                            as UC133
+    usecase "Ekspor PDF"                            as UC134
+    usecase "Laporan Stok"                          as UC135
+}
+
+package "Pengaturan" as PKG_SETTING {
+    usecase "Lihat Pengaturan"                  as UC141
+    usecase "Ubah Info Klinik"                  as UC142
+    usecase "Atur Ambang Batas Stok"            as UC143
+    usecase "Atur Hari Peringatan Kedaluwarsa"  as UC144
+}
+
+' ─────────────────────────────────────────────────────────────
+'  RELASI PENGUNJUNG
+' ─────────────────────────────────────────────────────────────
+Guest --> UC11
+Guest --> UC12
+Guest --> UC13
+Admin --> UC01
+Admin --> UC04
+Admin --> UC05
+
+' ─────────────────────────────────────────────────────────────
+'  RELASI ADMIN
+' ─────────────────────────────────────────────────────────────
+Admin --> UC02
+Admin --> UC03
+Admin --> UC06
+Admin --> UC07
+
+Admin --> UC21
+Admin --> UC22
+Admin --> UC23
+Admin --> UC24
+Admin --> UC25
+Admin --> UC26
+
+Admin --> UC31
+Admin --> UC32
+Admin --> UC33
+Admin --> UC34
+Admin --> UC35
+Admin --> UC36
+Admin --> UC37
+Admin --> UC38
+
+Admin --> UC41
+Admin --> UC42
+Admin --> UC43
+Admin --> UC44
+Admin --> UC45
+Admin --> UC46
+Admin --> UC47
+
+Admin --> UC51
+Admin --> UC52
+Admin --> UC53
+Admin --> UC54
+Admin --> UC55
+Admin --> UC56
+Admin --> UC57
+Admin --> UC58
+Admin --> UC59
+Admin --> UC60
+
+Admin --> UC71
+Admin --> UC72
+Admin --> UC73
+Admin --> UC74
+Admin --> UC81
+Admin --> UC82
+Admin --> UC83
+Admin --> UC84
+
+Admin --> UC91
+Admin --> UC92
+Admin --> UC93
+Admin --> UC94
+Admin --> UC101
+Admin --> UC102
+Admin --> UC103
+
+Admin --> UC111
+Admin --> UC112
+Admin --> UC113
+Admin --> UC114
+Admin --> UC115
+Admin --> UC116
+Admin --> UC117
+Admin --> UC118
+Admin --> UC119
+Admin --> UC120
+
+Admin --> UC131
+Admin --> UC132
+Admin --> UC133
+Admin --> UC134
+Admin --> UC135
+
+Admin --> UC141
+Admin --> UC142
+Admin --> UC143
+Admin --> UC144
+
+' ─────────────────────────────────────────────────────────────
+'  RELASI INCLUDE / EXTEND
+' ─────────────────────────────────────────────────────────────
+UC43 .> UC33 : <<extend>>\njika pasien belum ada
+UC53 .> UC45 : <<include>>\nubah status → selesai
+UC53 .> UC54 : <<include>>
+UC53 .> UC55 : <<include>>
+UC53 .> UC56 : <<include>>
+UC116 .> UC112 : <<include>>
+UC116 .> UC114 : <<include>>
+UC113 .> UC112 : <<include>>
+UC120 .> UC101 : <<include>>\nbalik mutasi stok
+UC102 .> UC101 : <<include>>
+UC103 .> UC101 : <<include>>
+UC131 .> UC132 : <<include>>
+UC131 .> UC133 : <<extend>>
+UC131 .> UC134 : <<extend>>
+
+' ─────────────────────────────────────────────────────────────
+'  NOTIFIKASI REAL-TIME (landing page)
+' ─────────────────────────────────────────────────────────────
+UC43 .> UC12 : <<extend>>\nnotifikasi pasien baru
+UC45 .> UC12 : <<extend>>\nnotifikasi status berubah
+
+@enduml

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Def_POS" targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:collaboration id="Collab_P">
+    <bpmn:participant id="Pool_P" name="Klinik Gigi drg. Moh Avif Widodo" processRef="Proc_P"/>
+  </bpmn:collaboration>
+
+  <bpmn:process id="Proc_P" isExecutable="false">
+    <bpmn:laneSet id="LS_P">
+      <bpmn:lane id="Lane_P_Dokter" name="Dokter / Staff Klinik">
+        <bpmn:flowNodeRef>SE_P</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_PilihPasien</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_TambahTreatment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_EditBOM</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_InputPembayaran</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_KonfirmasiTrx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_CetakStruk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EE_P</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_P_Sistem" name="Sistem POS &amp; Inventori">
+        <bpmn:flowNodeRef>T_P_LoadRM</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_LoadBOM</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_HitungTotal</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_SimpanTrx</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_P_StockMutation</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="SE_P" name="Buka Halaman POS"/>
+    <bpmn:task id="T_P_PilihPasien"      name="Pilih Pasien"/>
+    <bpmn:task id="T_P_TambahTreatment"  name="Tambah Treatment&#10;&amp; Item Obat"/>
+    <bpmn:task id="T_P_EditBOM"          name="Edit / Konfirmasi&#10;Item BOM Template"/>
+    <bpmn:task id="T_P_InputPembayaran"  name="Input Metode&#10;&amp; Jumlah Bayar"/>
+    <bpmn:task id="T_P_KonfirmasiTrx"   name="Konfirmasi Transaksi"/>
+    <bpmn:task id="T_P_CetakStruk"      name="Cetak Struk"/>
+    <bpmn:endEvent id="EE_P"            name="Transaksi Selesai"/>
+    <bpmn:task id="T_P_LoadRM"          name="Load Rekam Medis&#10;Terakhir (Opsional)"/>
+    <bpmn:task id="T_P_LoadBOM"         name="Load BOM Template&#10;untuk Treatment"/>
+    <bpmn:task id="T_P_HitungTotal"     name="Hitung Total&#10;&amp; Kembalian"/>
+    <bpmn:task id="T_P_SimpanTrx"       name="Simpan Data&#10;Transaksi"/>
+    <bpmn:task id="T_P_StockMutation"   name="Catat StockMutation&#10;FIFO per Batch"/>
+
+    <bpmn:sequenceFlow id="SF_P1"  sourceRef="SE_P"             targetRef="T_P_PilihPasien"/>
+    <bpmn:sequenceFlow id="SF_P2"  sourceRef="T_P_PilihPasien"  targetRef="T_P_LoadRM"/>
+    <bpmn:sequenceFlow id="SF_P3"  sourceRef="T_P_LoadRM"        targetRef="T_P_TambahTreatment"/>
+    <bpmn:sequenceFlow id="SF_P4"  sourceRef="T_P_TambahTreatment" targetRef="T_P_LoadBOM"/>
+    <bpmn:sequenceFlow id="SF_P5"  sourceRef="T_P_LoadBOM"       targetRef="T_P_EditBOM"/>
+    <bpmn:sequenceFlow id="SF_P6"  sourceRef="T_P_EditBOM"       targetRef="T_P_InputPembayaran"/>
+    <bpmn:sequenceFlow id="SF_P7"  sourceRef="T_P_InputPembayaran" targetRef="T_P_HitungTotal"/>
+    <bpmn:sequenceFlow id="SF_P8"  sourceRef="T_P_HitungTotal"  targetRef="T_P_KonfirmasiTrx"/>
+    <bpmn:sequenceFlow id="SF_P9"  sourceRef="T_P_KonfirmasiTrx" targetRef="T_P_SimpanTrx"/>
+    <bpmn:sequenceFlow id="SF_P10" sourceRef="T_P_SimpanTrx"    targetRef="T_P_StockMutation"/>
+    <bpmn:sequenceFlow id="SF_P11" sourceRef="T_P_StockMutation" targetRef="T_P_CetakStruk"/>
+    <bpmn:sequenceFlow id="SF_P12" sourceRef="T_P_CetakStruk"   targetRef="EE_P"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiag_P">
+    <bpmndi:BPMNPlane id="BPMNPlane_P" bpmnElement="Collab_P">
+
+      <bpmndi:BPMNShape id="Pool_P_di" bpmnElement="Pool_P" isHorizontal="true">
+        <dc:Bounds x="150" y="80" width="1900" height="300"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_P_Dokter_di" bpmnElement="Lane_P_Dokter" isHorizontal="true">
+        <dc:Bounds x="180" y="80" width="1870" height="150"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_P_Sistem_di" bpmnElement="Lane_P_Sistem" isHorizontal="true">
+        <dc:Bounds x="180" y="230" width="1870" height="150"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="SE_P_di" bpmnElement="SE_P">
+        <dc:Bounds x="222" y="137" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="205" y="180" width="70" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_PilihPasien_di" bpmnElement="T_P_PilihPasien">
+        <dc:Bounds x="305" y="125" width="120" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_TambahTreatment_di" bpmnElement="T_P_TambahTreatment">
+        <dc:Bounds x="530" y="125" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_EditBOM_di" bpmnElement="T_P_EditBOM">
+        <dc:Bounds x="770" y="125" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_InputPembayaran_di" bpmnElement="T_P_InputPembayaran">
+        <dc:Bounds x="1010" y="125" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_KonfirmasiTrx_di" bpmnElement="T_P_KonfirmasiTrx">
+        <dc:Bounds x="1260" y="125" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_CetakStruk_di" bpmnElement="T_P_CetakStruk">
+        <dc:Bounds x="1610" y="125" width="130" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EE_P_di" bpmnElement="EE_P">
+        <dc:Bounds x="1812" y="137" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1793" y="180" width="74" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="T_P_LoadRM_di" bpmnElement="T_P_LoadRM">
+        <dc:Bounds x="365" y="275" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_LoadBOM_di" bpmnElement="T_P_LoadBOM">
+        <dc:Bounds x="620" y="275" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_HitungTotal_di" bpmnElement="T_P_HitungTotal">
+        <dc:Bounds x="1010" y="275" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_SimpanTrx_di" bpmnElement="T_P_SimpanTrx">
+        <dc:Bounds x="1260" y="275" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_P_StockMutation_di" bpmnElement="T_P_StockMutation">
+        <dc:Bounds x="1470" y="275" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="SF_P1_di"  bpmnElement="SF_P1">
+        <di:waypoint x="258" y="155"/><di:waypoint x="305" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P2_di"  bpmnElement="SF_P2">
+        <di:waypoint x="365" y="185"/><di:waypoint x="365" y="230"/><di:waypoint x="440" y="230"/><di:waypoint x="440" y="275"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P3_di"  bpmnElement="SF_P3">
+        <di:waypoint x="440" y="275"/><di:waypoint x="440" y="185"/><di:waypoint x="530" y="185"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P4_di"  bpmnElement="SF_P4">
+        <di:waypoint x="600" y="185"/><di:waypoint x="600" y="230"/><di:waypoint x="695" y="230"/><di:waypoint x="695" y="275"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P5_di"  bpmnElement="SF_P5">
+        <di:waypoint x="695" y="275"/><di:waypoint x="695" y="185"/><di:waypoint x="770" y="185"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P6_di"  bpmnElement="SF_P6">
+        <di:waypoint x="910" y="155"/><di:waypoint x="1010" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P7_di"  bpmnElement="SF_P7">
+        <di:waypoint x="1080" y="185"/><di:waypoint x="1080" y="275"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P8_di"  bpmnElement="SF_P8">
+        <di:waypoint x="1080" y="275"/><di:waypoint x="1080" y="185"/><di:waypoint x="1260" y="185"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P9_di"  bpmnElement="SF_P9">
+        <di:waypoint x="1330" y="185"/><di:waypoint x="1330" y="275"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P10_di" bpmnElement="SF_P10">
+        <di:waypoint x="1400" y="305"/><di:waypoint x="1470" y="305"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P11_di" bpmnElement="SF_P11">
+        <di:waypoint x="1545" y="275"/><di:waypoint x="1545" y="185"/><di:waypoint x="1610" y="185"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_P12_di" bpmnElement="SF_P12">
+        <di:waypoint x="1740" y="155"/><di:waypoint x="1812" y="155"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

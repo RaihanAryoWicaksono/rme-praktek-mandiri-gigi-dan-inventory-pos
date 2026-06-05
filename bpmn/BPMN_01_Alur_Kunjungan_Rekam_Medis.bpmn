@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Def_Kunjungan" targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:collaboration id="Collab_K">
+    <bpmn:participant id="Pool_K" name="Klinik Gigi drg. Moh Avif Widodo" processRef="Proc_K"/>
+  </bpmn:collaboration>
+
+  <bpmn:process id="Proc_K" isExecutable="false">
+    <bpmn:laneSet id="LS_K">
+      <bpmn:lane id="Lane_K_Pasien" name="Pasien">
+        <bpmn:flowNodeRef>SE_K</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_Menunggu</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EE_K</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_K_Dokter" name="Dokter / Staff Klinik">
+        <bpmn:flowNodeRef>T_K_InputKunjungan</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_PanggilPasien</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_PeriksaPasien</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_IsiRekamMedis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_K_Tindakan</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_LanjutPOS</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_K_Sistem" name="Sistem RME">
+        <bpmn:flowNodeRef>T_K_BuatKunjungan</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_TampilAntrian</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_UpdateDiperiksa</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_SimpanRM</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_K_UpdateSelesai</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="SE_K" name="Pasien Datang ke Klinik"/>
+    <bpmn:task id="T_K_InputKunjungan" name="Input Data Kunjungan Pasien"/>
+    <bpmn:task id="T_K_PanggilPasien" name="Panggil Pasien dari Antrian"/>
+    <bpmn:task id="T_K_PeriksaPasien" name="Lakukan Pemeriksaan Fisik"/>
+    <bpmn:task id="T_K_IsiRekamMedis" name="Isi Rekam Medis dan Odontogram"/>
+    <bpmn:exclusiveGateway id="GW_K_Tindakan" name="Perlu Tindakan&#10;Lebih Lanjut?"/>
+    <bpmn:task id="T_K_LanjutPOS" name="Lanjutkan ke Transaksi POS"/>
+    <bpmn:task id="T_K_Menunggu" name="Menunggu di Antrian"/>
+    <bpmn:endEvent id="EE_K" name="Kunjungan Selesai"/>
+    <bpmn:task id="T_K_BuatKunjungan" name="Simpan Data Kunjungan&#10;Status = Antrian"/>
+    <bpmn:task id="T_K_TampilAntrian" name="Tampilkan Nomor Antrian&#10;di Halaman Publik"/>
+    <bpmn:task id="T_K_UpdateDiperiksa" name="Update Status Kunjungan&#10;= Sedang Diperiksa"/>
+    <bpmn:task id="T_K_SimpanRM" name="Simpan Rekam Medis&#10;&amp; Odontogram (JSON)"/>
+    <bpmn:task id="T_K_UpdateSelesai" name="Update Status Kunjungan&#10;= Selesai"/>
+
+    <bpmn:sequenceFlow id="SF_K1"  sourceRef="SE_K"             targetRef="T_K_InputKunjungan"/>
+    <bpmn:sequenceFlow id="SF_K2"  sourceRef="T_K_InputKunjungan" targetRef="T_K_BuatKunjungan"/>
+    <bpmn:sequenceFlow id="SF_K3"  sourceRef="T_K_BuatKunjungan"  targetRef="T_K_TampilAntrian"/>
+    <bpmn:sequenceFlow id="SF_K4"  sourceRef="T_K_TampilAntrian"  targetRef="T_K_Menunggu"/>
+    <bpmn:sequenceFlow id="SF_K5"  sourceRef="T_K_Menunggu"       targetRef="T_K_PanggilPasien"/>
+    <bpmn:sequenceFlow id="SF_K6"  sourceRef="T_K_PanggilPasien"  targetRef="T_K_UpdateDiperiksa"/>
+    <bpmn:sequenceFlow id="SF_K7"  sourceRef="T_K_UpdateDiperiksa" targetRef="T_K_PeriksaPasien"/>
+    <bpmn:sequenceFlow id="SF_K8"  sourceRef="T_K_PeriksaPasien"  targetRef="T_K_IsiRekamMedis"/>
+    <bpmn:sequenceFlow id="SF_K9"  sourceRef="T_K_IsiRekamMedis"  targetRef="T_K_SimpanRM"/>
+    <bpmn:sequenceFlow id="SF_K10" sourceRef="T_K_SimpanRM"       targetRef="T_K_UpdateSelesai"/>
+    <bpmn:sequenceFlow id="SF_K11" sourceRef="T_K_UpdateSelesai"  targetRef="GW_K_Tindakan"/>
+    <bpmn:sequenceFlow id="SF_K12" name="Ya"    sourceRef="GW_K_Tindakan" targetRef="T_K_LanjutPOS"/>
+    <bpmn:sequenceFlow id="SF_K13" name="Tidak" sourceRef="GW_K_Tindakan" targetRef="EE_K"/>
+    <bpmn:sequenceFlow id="SF_K14" sourceRef="T_K_LanjutPOS" targetRef="EE_K"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiag_K">
+    <bpmndi:BPMNPlane id="BPMNPlane_K" bpmnElement="Collab_K">
+
+      <bpmndi:BPMNShape id="Pool_K_di" bpmnElement="Pool_K" isHorizontal="true">
+        <dc:Bounds x="150" y="80" width="1900" height="450"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_K_Pasien_di" bpmnElement="Lane_K_Pasien" isHorizontal="true">
+        <dc:Bounds x="180" y="80" width="1870" height="150"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_K_Dokter_di" bpmnElement="Lane_K_Dokter" isHorizontal="true">
+        <dc:Bounds x="180" y="230" width="1870" height="150"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_K_Sistem_di" bpmnElement="Lane_K_Sistem" isHorizontal="true">
+        <dc:Bounds x="180" y="380" width="1870" height="150"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="SE_K_di" bpmnElement="SE_K">
+        <dc:Bounds x="232" y="137" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="210" y="180" width="80" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_Menunggu_di" bpmnElement="T_K_Menunggu">
+        <dc:Bounds x="490" y="125" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EE_K_di" bpmnElement="EE_K">
+        <dc:Bounds x="1832" y="137" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1812" y="180" width="76" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="T_K_InputKunjungan_di" bpmnElement="T_K_InputKunjungan">
+        <dc:Bounds x="315" y="275" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_PanggilPasien_di" bpmnElement="T_K_PanggilPasien">
+        <dc:Bounds x="630" y="275" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_PeriksaPasien_di" bpmnElement="T_K_PeriksaPasien">
+        <dc:Bounds x="850" y="275" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_IsiRekamMedis_di" bpmnElement="T_K_IsiRekamMedis">
+        <dc:Bounds x="1065" y="275" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_K_Tindakan_di" bpmnElement="GW_K_Tindakan" isMarkerVisible="true">
+        <dc:Bounds x="1325" y="280" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1308" y="337" width="84" height="40"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_LanjutPOS_di" bpmnElement="T_K_LanjutPOS">
+        <dc:Bounds x="1445" y="275" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNShape id="T_K_BuatKunjungan_di" bpmnElement="T_K_BuatKunjungan">
+        <dc:Bounds x="315" y="425" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_TampilAntrian_di" bpmnElement="T_K_TampilAntrian">
+        <dc:Bounds x="485" y="425" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_UpdateDiperiksa_di" bpmnElement="T_K_UpdateDiperiksa">
+        <dc:Bounds x="665" y="425" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_SimpanRM_di" bpmnElement="T_K_SimpanRM">
+        <dc:Bounds x="1065" y="425" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_K_UpdateSelesai_di" bpmnElement="T_K_UpdateSelesai">
+        <dc:Bounds x="1275" y="425" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+
+      <bpmndi:BPMNEdge id="SF_K1_di"  bpmnElement="SF_K1">
+        <di:waypoint x="268" y="155"/><di:waypoint x="390" y="155"/><di:waypoint x="390" y="275"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K2_di"  bpmnElement="SF_K2">
+        <di:waypoint x="390" y="335"/><di:waypoint x="390" y="425"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K3_di"  bpmnElement="SF_K3">
+        <di:waypoint x="465" y="455"/><di:waypoint x="485" y="455"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K4_di"  bpmnElement="SF_K4">
+        <di:waypoint x="560" y="425"/><di:waypoint x="560" y="185"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K5_di"  bpmnElement="SF_K5">
+        <di:waypoint x="630" y="155"/><di:waypoint x="700" y="155"/><di:waypoint x="700" y="275"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K6_di"  bpmnElement="SF_K6">
+        <di:waypoint x="700" y="335"/><di:waypoint x="700" y="380"/><di:waypoint x="740" y="380"/><di:waypoint x="740" y="425"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K7_di"  bpmnElement="SF_K7">
+        <di:waypoint x="815" y="455"/><di:waypoint x="920" y="455"/><di:waypoint x="920" y="335"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K8_di"  bpmnElement="SF_K8">
+        <di:waypoint x="990" y="305"/><di:waypoint x="1065" y="305"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K9_di"  bpmnElement="SF_K9">
+        <di:waypoint x="1140" y="335"/><di:waypoint x="1140" y="425"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K10_di" bpmnElement="SF_K10">
+        <di:waypoint x="1215" y="455"/><di:waypoint x="1275" y="455"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K11_di" bpmnElement="SF_K11">
+        <di:waypoint x="1350" y="425"/><di:waypoint x="1350" y="330"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K12_di" bpmnElement="SF_K12">
+        <di:waypoint x="1375" y="305"/><di:waypoint x="1445" y="305"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1392" y="285" width="18" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K13_di" bpmnElement="SF_K13">
+        <di:waypoint x="1350" y="280"/><di:waypoint x="1350" y="155"/><di:waypoint x="1832" y="155"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1558" y="135" width="35" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_K14_di" bpmnElement="SF_K14">
+        <di:waypoint x="1595" y="305"/><di:waypoint x="1850" y="305"/><di:waypoint x="1850" y="173"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

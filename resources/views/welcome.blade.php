@@ -264,6 +264,19 @@
         </div>
     </div>
 </section>
+{{-- Tombol aktifkan suara --}}
+<button id="btn-suara" onclick="unlockAudio()"
+    class="fixed bottom-6 left-6 z-50 flex items-center gap-2 rounded-full border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-lg transition hover:bg-teal-50 hover:text-teal-700 hover:border-teal-200 pointer-events-auto">
+    <svg id="icon-mute" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"/>
+    </svg>
+    <svg id="icon-sound" class="w-4 h-4 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072M12 6v12m0 0l-3-3m3 3l3-3M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+    </svg>
+    <span id="label-suara">Aktifkan Suara</span>
+</button>
+
 {{-- Popup notification container --}}
 <div id="notif-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-3 max-w-sm pointer-events-none"></div>
 
@@ -290,9 +303,25 @@
 
     const container = document.getElementById('notif-container');
 
+    // ── Unlock audio (wajib dijalankan lewat interaksi pengguna) ─────────────
+    let audioUnlocked = false;
+
+    window.unlockAudio = function () {
+        if (!('speechSynthesis' in window)) return;
+        if (audioUnlocked) return;
+        // Fire silent utterance untuk bypass autoplay policy browser
+        const silent = new SpeechSynthesisUtterance('');
+        window.speechSynthesis.speak(silent);
+        audioUnlocked = true;
+        document.getElementById('btn-suara').classList.add('bg-teal-50', 'text-teal-700', 'border-teal-200');
+        document.getElementById('icon-mute').classList.add('hidden');
+        document.getElementById('icon-sound').classList.remove('hidden');
+        document.getElementById('label-suara').textContent = 'Suara Aktif';
+    };
+
     // ── Suara pengumuman ──────────────────────────────────────────────────────
     function speak(text) {
-        if (!('speechSynthesis' in window)) return;
+        if (!('speechSynthesis' in window) || !audioUnlocked) return;
         window.speechSynthesis.cancel();
         const u = new SpeechSynthesisUtterance(text);
         u.lang  = 'id-ID';

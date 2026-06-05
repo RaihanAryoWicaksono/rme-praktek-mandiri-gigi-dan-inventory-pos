@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+                  xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+                  id="Def_Stok" targetNamespace="http://bpmn.io/schema/bpmn">
+
+  <bpmn:collaboration id="Collab_S">
+    <bpmn:participant id="Pool_S" name="Klinik Gigi drg. Moh Avif Widodo" processRef="Proc_S"/>
+  </bpmn:collaboration>
+
+  <bpmn:process id="Proc_S" isExecutable="false">
+    <bpmn:laneSet id="LS_S">
+      <bpmn:lane id="Lane_S_Dokter" name="Dokter / Staff Klinik">
+        <bpmn:flowNodeRef>SE_S</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_CekStok</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_S_Jenis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_FormMasuk</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_FormKoreksi</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EE_S</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_S_Sistem" name="Sistem Inventori">
+        <bpmn:flowNodeRef>T_S_TampilStok</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_BuatBatch</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_CatatExpense</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_MutasiIn</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_MutasiCorr</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_S_Merge</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>T_S_UpdateTampil</bpmn:flowNodeRef>
+      </bpmn:lane>
+    </bpmn:laneSet>
+
+    <bpmn:startEvent id="SE_S" name="Buka Halaman Stok"/>
+    <bpmn:task id="T_S_CekStok"      name="Cek Daftar Stok Item"/>
+    <bpmn:exclusiveGateway id="GW_S_Jenis" name="Jenis Aksi?"/>
+    <bpmn:task id="T_S_FormMasuk"    name="Isi Form Penerimaan&#10;Stok Baru"/>
+    <bpmn:task id="T_S_FormKoreksi"  name="Isi Form Koreksi Stok&#10;&amp; Alasan"/>
+    <bpmn:endEvent id="EE_S"         name="Stok Diperbarui"/>
+    <bpmn:task id="T_S_TampilStok"   name="Tampilkan Daftar Stok&#10;&amp; Peringatan Kadaluarsa"/>
+    <bpmn:task id="T_S_BuatBatch"    name="Buat ItemBatch Baru&#10;(Batch, Qty, Expired)"/>
+    <bpmn:task id="T_S_CatatExpense" name="Catat Pengeluaran&#10;(Expense) Otomatis"/>
+    <bpmn:task id="T_S_MutasiIn"     name="Catat StockMutation&#10;Type = IN"/>
+    <bpmn:task id="T_S_MutasiCorr"   name="Catat StockMutation&#10;Type = CORRECTION"/>
+    <bpmn:exclusiveGateway id="GW_S_Merge" name=""/>
+    <bpmn:task id="T_S_UpdateTampil" name="Update Tampilan Stok&#10;&amp; Alert Dashboard"/>
+
+    <bpmn:sequenceFlow id="SF_S1"  sourceRef="SE_S"           targetRef="T_S_CekStok"/>
+    <bpmn:sequenceFlow id="SF_S2"  sourceRef="T_S_CekStok"    targetRef="T_S_TampilStok"/>
+    <bpmn:sequenceFlow id="SF_S3"  sourceRef="T_S_TampilStok" targetRef="GW_S_Jenis"/>
+    <bpmn:sequenceFlow id="SF_S4"  name="Stok Masuk" sourceRef="GW_S_Jenis"    targetRef="T_S_FormMasuk"/>
+    <bpmn:sequenceFlow id="SF_S5"  name="Koreksi"    sourceRef="GW_S_Jenis"    targetRef="T_S_FormKoreksi"/>
+    <bpmn:sequenceFlow id="SF_S6"  sourceRef="T_S_FormMasuk"  targetRef="T_S_BuatBatch"/>
+    <bpmn:sequenceFlow id="SF_S7"  sourceRef="T_S_BuatBatch"  targetRef="T_S_CatatExpense"/>
+    <bpmn:sequenceFlow id="SF_S8"  sourceRef="T_S_CatatExpense" targetRef="T_S_MutasiIn"/>
+    <bpmn:sequenceFlow id="SF_S9"  sourceRef="T_S_MutasiIn"   targetRef="GW_S_Merge"/>
+    <bpmn:sequenceFlow id="SF_S10" sourceRef="T_S_FormKoreksi" targetRef="T_S_MutasiCorr"/>
+    <bpmn:sequenceFlow id="SF_S11" sourceRef="T_S_MutasiCorr" targetRef="GW_S_Merge"/>
+    <bpmn:sequenceFlow id="SF_S12" sourceRef="GW_S_Merge"     targetRef="T_S_UpdateTampil"/>
+    <bpmn:sequenceFlow id="SF_S13" sourceRef="T_S_UpdateTampil" targetRef="EE_S"/>
+  </bpmn:process>
+
+  <bpmndi:BPMNDiagram id="BPMNDiag_S">
+    <bpmndi:BPMNPlane id="BPMNPlane_S" bpmnElement="Collab_S">
+
+      <bpmndi:BPMNShape id="Pool_S_di" bpmnElement="Pool_S" isHorizontal="true">
+        <dc:Bounds x="150" y="80" width="1680" height="450"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_S_Dokter_di" bpmnElement="Lane_S_Dokter" isHorizontal="true">
+        <dc:Bounds x="180" y="80" width="1650" height="225"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_S_Sistem_di" bpmnElement="Lane_S_Sistem" isHorizontal="true">
+        <dc:Bounds x="180" y="305" width="1650" height="225"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Lane Dokter -->
+      <bpmndi:BPMNShape id="SE_S_di" bpmnElement="SE_S">
+        <dc:Bounds x="222" y="137" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="205" y="180" width="70" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_CekStok_di" bpmnElement="T_S_CekStok">
+        <dc:Bounds x="305" y="125" width="130" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_S_Jenis_di" bpmnElement="GW_S_Jenis" isMarkerVisible="true">
+        <dc:Bounds x="520" y="130" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="511" y="187" width="68" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_FormMasuk_di" bpmnElement="T_S_FormMasuk">
+        <dc:Bounds x="650" y="95" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_FormKoreksi_di" bpmnElement="T_S_FormKoreksi">
+        <dc:Bounds x="650" y="195" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EE_S_di" bpmnElement="EE_S">
+        <dc:Bounds x="1572" y="137" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1553" y="180" width="74" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
+      <!-- Lane Sistem -->
+      <bpmndi:BPMNShape id="T_S_TampilStok_di" bpmnElement="T_S_TampilStok">
+        <dc:Bounds x="305" y="392" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_BuatBatch_di" bpmnElement="T_S_BuatBatch">
+        <dc:Bounds x="650" y="355" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_CatatExpense_di" bpmnElement="T_S_CatatExpense">
+        <dc:Bounds x="830" y="355" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_MutasiIn_di" bpmnElement="T_S_MutasiIn">
+        <dc:Bounds x="1010" y="355" width="140" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_MutasiCorr_di" bpmnElement="T_S_MutasiCorr">
+        <dc:Bounds x="830" y="450" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_S_Merge_di" bpmnElement="GW_S_Merge">
+        <dc:Bounds x="1205" y="360" width="50" height="50"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="T_S_UpdateTampil_di" bpmnElement="T_S_UpdateTampil">
+        <dc:Bounds x="1310" y="372" width="150" height="60"/>
+      </bpmndi:BPMNShape>
+
+      <!-- Edges -->
+      <bpmndi:BPMNEdge id="SF_S1_di"  bpmnElement="SF_S1">
+        <di:waypoint x="258" y="155"/><di:waypoint x="305" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S2_di"  bpmnElement="SF_S2">
+        <di:waypoint x="370" y="185"/><di:waypoint x="370" y="392"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S3_di"  bpmnElement="SF_S3">
+        <di:waypoint x="455" y="422"/><di:waypoint x="545" y="422"/><di:waypoint x="545" y="305"/><di:waypoint x="545" y="180"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S4_di"  bpmnElement="SF_S4">
+        <di:waypoint x="570" y="155"/><di:waypoint x="610" y="155"/><di:waypoint x="610" y="125"/><di:waypoint x="650" y="125"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="578" y="125" width="56" height="27"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S5_di"  bpmnElement="SF_S5">
+        <di:waypoint x="545" y="180"/><di:waypoint x="545" y="225"/><di:waypoint x="650" y="225"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="556" y="215" width="47" height="14"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S6_di"  bpmnElement="SF_S6">
+        <di:waypoint x="720" y="155"/><di:waypoint x="720" y="305"/><di:waypoint x="720" y="355"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S7_di"  bpmnElement="SF_S7">
+        <di:waypoint x="790" y="385"/><di:waypoint x="830" y="385"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S8_di"  bpmnElement="SF_S8">
+        <di:waypoint x="970" y="385"/><di:waypoint x="1010" y="385"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S9_di"  bpmnElement="SF_S9">
+        <di:waypoint x="1150" y="385"/><di:waypoint x="1205" y="385"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S10_di" bpmnElement="SF_S10">
+        <di:waypoint x="790" y="225"/><di:waypoint x="905" y="225"/><di:waypoint x="905" y="305"/><di:waypoint x="905" y="450"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S11_di" bpmnElement="SF_S11">
+        <di:waypoint x="980" y="480"/><di:waypoint x="1230" y="480"/><di:waypoint x="1230" y="410"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S12_di" bpmnElement="SF_S12">
+        <di:waypoint x="1255" y="385"/><di:waypoint x="1310" y="385"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_S13_di" bpmnElement="SF_S13">
+        <di:waypoint x="1460" y="402"/><di:waypoint x="1590" y="402"/><di:waypoint x="1590" y="173"/>
+      </bpmndi:BPMNEdge>
+
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
